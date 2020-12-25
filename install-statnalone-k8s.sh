@@ -180,5 +180,6 @@ configIpvs
 installDocker
 installKubeadm
 installFlannel
-installNfs
 configK8s
+installNfs
+checkK8s
