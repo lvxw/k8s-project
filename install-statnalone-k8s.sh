@@ -146,19 +146,26 @@ function installFlannel(){
     kubectl apply -f kube-flannel.yml
 }
 
+function configK8s(){
+    sed -i "s/- kube-apiserver/- kube-apiserver\\n    - --service-node-port-range=1-65535/g" /etc/kubernetes/manifests/kube-apiserver.yaml
+}
+
+function checkK8s(){
+     echo "please wait ....................."
+     sleep 20s
+     kubectl  get nodes
+     kubectl  get pod --all-namespaces
+}
+
 function installNfs() {
     yum -y install nfs-utils showmount
     echo "/media `echo ${curr_ip}  |  awk -F '.' '{print $1"."$2"."$3".0"}'`/24(rw,no_root_squash,sync)" > /etc/exports
     systemctl start nfs
     systemctl enable nfs
-    showmount -e k8s-master01
     mkdir /data
     mount  k8s-master01:/media /data/
+    showmount -e k8s-master01
     echo "k8s-master01:/media     /data   nfs     defaults        0       0" >> /etc/fstab
-}
-
-function configK8s(){
-    sed -i "s/- kube-apiserver/- kube-apiserver\\n    - --service-node-port-range=1-65535/g" /etc/kubernetes/manifests/kube-apiserver.yaml
 }
 
 initHostname
@@ -173,4 +180,5 @@ configIpvs
 installDocker
 installKubeadm
 installFlannel
+installNfs
 configK8s
