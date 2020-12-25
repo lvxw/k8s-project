@@ -43,10 +43,8 @@ function setTimeZone(){
 }
 
 function closeUnusedService(){
-    timedatectl set-timezone Asia/Shanghai
-    timedatectl set-local-rtc 0
-    systemctl restart rsyslog
-    systemctl restart crond
+    systemctl stop postfix
+    systemctl disable postfix
 }
 
 function configJournal(){
@@ -123,7 +121,7 @@ EOF
     sed -i "s/advertiseAddress: 1.2.3.4/advertiseAddress: ${curr_ip}/g"  kubeadm-config.yaml
     sed -i "s/serviceSubnet: 10.96.0.0\/12/serviceSubnet: 10.96.0.0\/12\\n  podSubnet: 10.244.0.0\/16/g"  kubeadm-config.yaml
     sed -i "s/kubernetesVersion: v1.14.0/kubernetesVersion: v1.15.1/g"  kubeadm-config.yaml
-    sed -i "/k8s.gcr.io/registry.aliyuncs.com\/google_containers/g" kubeadm-config.yaml
+    sed -i "s/k8s.gcr.io/registry.aliyuncs.com\/google_containers/g" kubeadm-config.yaml
 
     cat <<EOF >> kubeadm-config.yaml
 ---
@@ -134,8 +132,7 @@ SupportIPVSProxyMode: true
 mode: ipvs
 EOF
 
-    echo "1" >/proc/sys/net/bridge/bridge-nf-call-iptables
-    kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs > kubeadm-init.log
+    kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs | tee kubeadm-init.log
     mkdir -p $HOME/.kube
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     chown $(id -u):$(id -g) $HOME/.kube/config
@@ -146,7 +143,7 @@ EOF
 function installFlannel(){
     wget https://raw.githubusercontent.com/coreos/flannel/v0.13.0/Documentation/kube-flannel.yml --no-check-certificate
     sed -i "s/quay.io/quay.mirrors.ustc.edu.cn/g" kube-flannel.yml
-    kubectl apply -f
+    kubectl apply -f kube-flannel.yml
 }
 
 function installNfs() {
@@ -155,15 +152,13 @@ function installNfs() {
     systemctl start nfs
     systemctl enable nfs
     showmount -e k8s-master01
+    mkdir /data
     mount  k8s-master01:/media /data/
     echo "k8s-master01:/media     /data   nfs     defaults        0       0" >> /etc/fstab
 }
 
-function downloadBigdataOnK8s(){
-    git clone  https://gitee.com/slwx2020/bigdata-on-k8s.git
-    cd bigdata-on-k8s
-    chmod 755 *.sh
-     ./create-by-yaml.sh  hadoop
+function configK8s(){
+    sed -i "s/- kube-apiserver/- kube-apiserver\\n    - --service-node-port-range=1-65535/g" /etc/kubernetes/manifests/kube-apiserver.yaml
 }
 
 initHostname
@@ -178,7 +173,4 @@ configIpvs
 installDocker
 installKubeadm
 installFlannel
-downloadBigdataOnK8s
-
-
-
+configK8s
