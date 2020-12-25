@@ -87,7 +87,7 @@ EOF
 function installDocker(){
     yum install -y yum-utils device-mapper-persistent-data lvm2
     yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-    yum update -y && yum install -y docker-ce
+    yum install -y docker-ce
     mkdir /etc/docker
     cat > /etc/docker/daemon.json <<EOF
 {
@@ -99,7 +99,9 @@ function installDocker(){
 }
 EOF
    mkdir -p /etc/systemd/system/docker.service.d
-   systemctl daemon-reload && systemctl restart docker && systemctl enable docker
+   systemctl daemon-reload
+   systemctl restart docker
+   systemctl enable docker
 
 }
 
