@@ -78,7 +78,8 @@ modprobe -- ip_vs_wrr
 modprobe -- ip_vs_sh
 modprobe -- nf_conntrack_ipv4
 EOF
-    chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules &&
+    chmod 755 /etc/sysconfig/modules/ipvs.modules
+    bash /etc/sysconfig/modules/ipvs.modules
     lsmod | grep -e ip_vs -e nf_conntrack_ipv4
 }
 
@@ -131,6 +132,7 @@ SupportIPVSProxyMode: true
 mode: ipvs
 EOF
 
+    echo "1" >/proc/sys/net/bridge/bridge-nf-call-iptables
     kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs > kubeadm-init.log
     mkdir -p $HOME/.kube
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
