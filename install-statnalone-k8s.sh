@@ -89,11 +89,12 @@ function installDocker(){
     mkdir /etc/docker
     cat > /etc/docker/daemon.json <<EOF
 {
-"exec-opts": ["native.cgroupdriver=systemd"],
-"log-driver": "json-file",
-"log-opts": {
-"max-size": "100m"
-}
+    "registry-mirrors": ["https://ltaa1zpv.mirror.aliyuncs.com"],
+    "exec-opts": ["native.cgroupdriver=systemd"],
+    "log-driver": "json-file",
+    "log-opts": {
+        "max-size": "100m"
+    }
 }
 EOF
    mkdir -p /etc/systemd/system/docker.service.d
