@@ -183,5 +183,5 @@ installDocker
 installKubeadm
 installFlannel
 configK8s
-installNfs
 checkK8s
+installNfs
