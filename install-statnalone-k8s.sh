@@ -13,7 +13,9 @@ function initHostname(){
 }
 
 function installDependency(){
-  yum install -y wget conntrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git
+  yum install -y wget conntrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git epel-release
+  yum -y install python-pip
+  pip install kazoo
 }
 
 function closeSwap(){
