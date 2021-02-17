@@ -13,7 +13,7 @@ function initHostname(){
 }
 
 function installDependency(){
-  yum install -y wget conntrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git epel-release
+  yum install -y wget conntrack ntpdate ntp ipvsadm ipset jq iptables curl sysstat libseccomp wget vim net-tools git epel-release lrzsz unix2dos
   yum -y install python-pip
   pip install kazoo
 }
@@ -147,7 +147,7 @@ EOF
 function installFlannel(){
     while true
     do
-        wget https://raw.githubusercontent.com/coreos/flannel/v0.13.0/Documentation/kube-flannel.yml --no-check-certificate
+        wget --no-cookie --no-check-certificate https://raw.githubusercontent.com/coreos/flannel/v0.13.0/Documentation/kube-flannel.yml
         if [[ `ls -l |  grep kube-flannel.yml  |  awk '{print $9}'` == 'kube-flannel.yml' ]]
         then
             break
