@@ -146,7 +146,17 @@ EOF
 }
 
 function installFlannel(){
-    wget https://raw.githubusercontent.com/coreos/flannel/v0.13.0/Documentation/kube-flannel.yml --no-check-certificate
+    while true
+    do
+        wget https://raw.githubusercontent.com/coreos/flannel/v0.13.0/Documentation/kube-flannel.yml --no-check-certificate
+        if [[ `ls -l |  grep kube-flannel.yml  |  awk '{print $9}'` == 'kube-flannel.yml' ]]
+        then
+            break
+        else
+            echo "kube-flannel.yml不存在, 5s后重试"
+            sleep 5s
+        fi
+    done
     sed -i "s/quay.io/quay.mirrors.ustc.edu.cn/g" kube-flannel.yml
     kubectl apply -f kube-flannel.yml
 }
