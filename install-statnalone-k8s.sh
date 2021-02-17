@@ -104,6 +104,7 @@ EOF
    systemctl daemon-reload
    systemctl restart docker
    systemctl enable docker
+   docker login -ulvxw_aly  -p15327973352ZXC registry.cn-hangzhou.aliyuncs.com
 
 }
 
