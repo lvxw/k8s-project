@@ -104,7 +104,6 @@ EOF
    systemctl daemon-reload
    systemctl restart docker
    systemctl enable docker
-   docker login -ulvxw_aly  -p15327973352ZXC registry.cn-hangzhou.aliyuncs.com
 
 }
 
@@ -170,6 +169,7 @@ function checkK8s(){
      sleep 20s
      kubectl  get nodes
      kubectl  get pod --all-namespaces
+     docker login -ulvxw_aly  -p15327973352ZXC registry.cn-hangzhou.aliyuncs.com
 }
 
 function installNfs() {
